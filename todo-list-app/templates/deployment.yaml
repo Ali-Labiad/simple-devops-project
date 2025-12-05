@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: todo-list
+  labels:
+    app: todo-list
+    release: {{ .Release.Name }}  
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      release: {{ .Release.Name }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        app: todo-list
+        release: {{ .Release.Name }}
+    spec:
+      containers:
+        - name: todo-list
+          image: "{{ .Values.images.todo_backend.repository }}:{{ .Values.images.todo_backend.tag }}"
+          imagePullPolicy: "{{ .Values.images.todo_backend.pullPolicy }}"
+          ports:
+            - name: api
+              containerPort: 8080
+              protocol: TCP
+          env:
+            - name: DATABASE_SVC
+              value: "{{ .Values.mysql.database_service }}"
+            - name: DATABASE_PORT
+              value: "{{ .Values.mysql.database_port }}"
+            - name: DATABASE_PASSWORD
+              value: "{{ .Values.mysql.database_password }}"  
+        - name: todo-frontend
+          image: "{{ .Values.images.todo_frontend.repository }}:{{ .Values.images.todo_frontend.tag }}"
+          imagePullPolicy: "{{ .Values.images.todo_frontend.pullPolicy }}"
+          ports:
+            - name: http
+              containerPort: 80
+              protocol: TCP
+        - name: todo-db
+          image: "{{ .Values.images.todo_db.repository }}:{{ .Values.images.todo_db.tag }}"
+          imagePullPolicy: "{{ .Values.images.todo_db.pullPolicy }}"
+          ports:
+            - name: api
+              containerPort: {{ .Values.mysql.database_port }}
+              protocol: TCP
+          env:
+            - name: MYSQL_DATABASE
+              value: "{{ .Values.mysql.database_name }}"
+            - name: MYSQL_ROOT_PASSWORD
+              value: "{{ .Values.mysql.database_password }}"             
