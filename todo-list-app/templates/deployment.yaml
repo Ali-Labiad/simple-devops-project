@@ -41,16 +41,4 @@ spec:
           ports:
             - name: http
               containerPort: 80
-              protocol: TCP
-        - name: todo-db
-          image: "{{ .Values.images.todo_db.repository }}:{{ .Values.images.todo_db.tag }}"
-          imagePullPolicy: "{{ .Values.images.todo_db.pullPolicy }}"
-          ports:
-            - name: api
-              containerPort: {{ .Values.mysql.database_port }}
-              protocol: TCP
-          env:
-            - name: MYSQL_DATABASE
-              value: "{{ .Values.mysql.database_name }}"
-            - name: MYSQL_ROOT_PASSWORD
-              value: "{{ .Values.mysql.database_password }}"             
+              protocol: TCP             

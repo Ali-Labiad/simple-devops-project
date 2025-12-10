@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mysql-db
+  labels:
+    app: mysql-db
+    release: {{ .Release.Name }}  
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      release: {{ .Release.Name }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        app: mysql-db
+        release: {{ .Release.Name }}
+    spec:
+      containers:
+        - name: mysql-db
+          image: "{{ .Values.images.todo_db.repository }}:{{ .Values.images.todo_db.tag }}"
+          imagePullPolicy: "{{ .Values.images.todo_db.pullPolicy }}"
+          lifecycle:
+            postStart:
+              exec:
+                command: ["/bin/sh", "-c", "echo 'bind-address = 0.0.0.0' >> /etc/my.cnf && service mysql restart"]          
+          ports:
+            - name: api
+              containerPort: {{ .Values.mysql.database_port }}
+              protocol: TCP
+          env:
+            - name: MYSQL_DATABASE
+              value: "{{ .Values.mysql.database_name }}"
+            - name: MYSQL_ROOT_PASSWORD
+              value: "{{ .Values.mysql.database_password }}"             

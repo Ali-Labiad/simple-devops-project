@@ -20,7 +20,7 @@ service:
   port: 80
 
 mysql:
-  database_service: localhost
+  database_service: mysql-db
   database_name: todo
   database_password: secret-pass
   database_port: 3306
