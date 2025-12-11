@@ -1,0 +1,56 @@
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: todo-list-pipeline
+spec:
+  params:
+    - name: repo-url
+      type: string
+    - name: commit-sha
+      type: string
+      description: the git commit sha to use as a commit git
+    - name: manifest-repo-url
+      type: string
+  workspaces:
+    - name: shared-workspace
+  tasks:
+    - name: clone-source
+      taskRef:
+        name: git-clone
+      workspaces:
+        - name: output
+          workspace: shared-workspace
+      params:
+        - name: url
+          value: $(params.repo-url)
+        - name: revision
+          value: $(params.commit-sha)
+    
+    - name: todo-backend-build
+      taskRef:
+        name: kaniko
+      runAfter:
+        - clone-source
+      workspaces:
+        - name: source
+          workspace: shared-workspace
+      params:
+        - name: IMAGE
+          value: quay.io/ali.labiad/devops-repo/todo-backend:$(params.commit-sha)
+        - name: CONTEXT
+          value: ./todo-backend
+    - name: todo-frontend-build
+      taskRef:
+        name: kaniko
+      runAfter:
+        - clone-source
+      workspaces:
+        - name: source
+          workspace: shared-workspace
+      params:
+        - name: IMAGE
+          value: quay.io/ali.labiad/devops-repo/todo-frontend:$(params.commit-sha)
+        - name: CONTEXT
+          value: ./todo-frontend
+
+    
