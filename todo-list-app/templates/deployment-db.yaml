@@ -22,7 +22,7 @@ spec:
     spec:
       initContainers:
       - name: configure-mysql
-        image: busybox:stable # A simple image with sh/echo commands
+        image: docker.io/library/busybox:stable # A simple image with sh/echo commands
         command: ['sh', '-c', 'echo "bind-address = 0.0.0.0" >> /mnt/config/my.cnf']
       containers:
         - name: mysql-db
