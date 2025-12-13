@@ -20,6 +20,10 @@ spec:
         app: todo-list
         release: {{ .Release.Name }}
     spec:
+      initContainers:
+        - name: init-cont
+          image: busybox:1.31
+          command: ['sh', '-c', 'echo -e "Checking for the availability of MySQL Server deployment"; while ! nc -z todo-list-mysql 3306; do sleep 1; printf "-"; done; echo -e "  >> MySQL DB Server has started";']
       containers:
         - name: todo-list
           image: "{{ .Values.images.todo_backend.repository }}:{{ .Values.images.todo_backend.tag }}"
@@ -30,11 +34,11 @@ spec:
               protocol: TCP
           env:
             - name: DATABASE_SVC
-              value: "{{ .Values.mysql.database_service }}"
+              value: todo-list-mysql
             - name: DATABASE_PORT
-              value: "{{ .Values.mysql.database_port }}"
+              value: "3306"
             - name: DATABASE_PASSWORD
-              value: "{{ .Values.mysql.database_password }}"  
+              value: "{{ .Values.mysql.auth.rootPassword }}"  
         - name: todo-frontend
           image: "{{ .Values.images.todo_frontend.repository }}:{{ .Values.images.todo_frontend.tag }}"
           imagePullPolicy: "{{ .Values.images.todo_frontend.pullPolicy }}"

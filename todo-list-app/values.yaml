@@ -20,7 +20,15 @@ service:
   port: 80
 
 mysql:
-  database_service: mysql-db
-  database_name: todo
-  database_password: secret-pass
-  database_port: 3306
+  image:
+    repository: bitnamilegacy/mysql
+    tag: 8.0.30-debian-11-r27
+  enabled: true
+  auth:
+    rootPassword: "secret-pass"
+    database: "todo"
+    username: "root"
+    password: "secret-pass"
+  persistence:
+    enabled: true
+    size: 1Gi

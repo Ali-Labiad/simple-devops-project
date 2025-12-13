@@ -25,6 +25,5 @@ appVersion: "1.16.0"
 
 dependencies:
   - name: mysql
-    version: 14.0.5
+    version: 9.3.5
     repository: https://charts.bitnami.com/bitnami
-    alias: database # You can use an alias to refer to it easily
