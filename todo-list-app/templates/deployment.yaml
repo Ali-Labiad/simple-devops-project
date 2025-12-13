@@ -30,7 +30,7 @@ spec:
           imagePullPolicy: "{{ .Values.images.todo_backend.pullPolicy }}"
           ports:
             - name: api
-              containerPort: 3000
+              containerPort: 8080
               protocol: TCP
           env:
             - name: DATABASE_SVC
@@ -41,9 +41,6 @@ spec:
               value: "{{ .Values.mysql.auth.rootPassword }}"  
         - name: todo-frontend
           image: "{{ .Values.images.todo_frontend.repository }}:{{ .Values.images.todo_frontend.tag }}"
-          env:
-            - name: REACT_APP_API_HOST
-              value: "http://localhost:3000"
           imagePullPolicy: "{{ .Values.images.todo_frontend.pullPolicy }}"
           ports:
             - name: http
