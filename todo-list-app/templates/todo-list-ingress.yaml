@@ -4,7 +4,7 @@ metadata:
   name: todo-list-ingress
 spec:
   rules:
-  - host: zima.ycinteclab.duckdns.org
+  - host: todo-list.ycinteclab.duckdns.org
     http:
       paths:
       - path: /
