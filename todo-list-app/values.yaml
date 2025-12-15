@@ -16,7 +16,7 @@ images:
     tag: "latest"
 
 service:
-  type: LoadBalancer
+  type: ClusterIP
   port: 80
 
 mysql:
